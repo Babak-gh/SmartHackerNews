@@ -32,6 +32,7 @@ class NewsAdapter : PagedListAdapter<News, RecyclerView.ViewHolder>(NEWS_COMPARA
 
     class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val name: TextView = view.findViewById(R.id.news_view_item_title)
+        private val timeAgoTextView: TextView = view.findViewById(R.id.news_view_item_time_ago)
 
         private var news: News? = null
 
@@ -57,6 +58,7 @@ class NewsAdapter : PagedListAdapter<News, RecyclerView.ViewHolder>(NEWS_COMPARA
         private fun showRepoData(news: News) {
             this.news = news
             name.text = news.title
+            timeAgoTextView.text = news.time_ago
         }
 
         companion object {
