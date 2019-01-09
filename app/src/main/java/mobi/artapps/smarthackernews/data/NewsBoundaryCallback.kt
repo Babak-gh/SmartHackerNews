@@ -49,6 +49,10 @@ class NewsBoundaryCallback(
         requestAndSaveData()
     }
 
+    override fun onItemAtFrontLoaded(itemAtFront: News) {
+
+    }
+
     private fun requestAndSaveData() {
         if (isRequestInProgress) return
 

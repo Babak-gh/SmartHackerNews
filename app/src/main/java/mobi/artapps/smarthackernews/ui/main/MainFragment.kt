@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -35,6 +36,19 @@ class MainFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
+
+        val swipeRefreshLayout = view?.findViewById<SwipeRefreshLayout>(R.id.swipeContainer)
+        swipeRefreshLayout?.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
+        );
+
+        swipeRefreshLayout?.setOnRefreshListener {
+            viewModel.invalidateDataSource()
+        }
+
         val recyclerView = view?.findViewById<RecyclerView>(R.id.main_fragment_recycler)
         recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         newsAdapter = NewsAdapter()
@@ -44,6 +58,7 @@ class MainFragment : Fragment() {
             Log.d("Activity", "list: ${it?.size}")
             //showEmptyList(it?.size == 0)
             newsAdapter.submitList(it)
+            swipeRefreshLayout?.isRefreshing = false
         })
 
         viewModel.networkErrors.observe(this, Observer<String> {

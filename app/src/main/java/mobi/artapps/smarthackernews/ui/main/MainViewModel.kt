@@ -26,4 +26,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         queryLiveData.postValue(queryString)
     }
 
+    fun invalidateDataSource() {
+        mAllNews.value?.dataSource?.invalidate()
+    }
+
 }
