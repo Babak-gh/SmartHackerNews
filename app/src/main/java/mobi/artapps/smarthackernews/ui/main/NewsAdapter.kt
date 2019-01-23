@@ -31,8 +31,12 @@ class NewsAdapter : PagedListAdapter<News, RecyclerView.ViewHolder>(NEWS_COMPARA
 
 
     class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val name: TextView = view.findViewById(R.id.news_view_item_title)
+        private val nameTextView: TextView = view.findViewById(R.id.news_view_item_title)
         private val timeAgoTextView: TextView = view.findViewById(R.id.news_view_item_time_ago)
+        private val userTextView: TextView = view.findViewById(R.id.news_view_item_user)
+        private val linkTextView: TextView = view.findViewById(R.id.news_view_item_link)
+        private val commentTextView: TextView = view.findViewById(R.id.news_view_item_comment)
+        private val pointsTextView: TextView = view.findViewById(R.id.news_view_item_points)
 
         private var news: News? = null
 
@@ -57,8 +61,13 @@ class NewsAdapter : PagedListAdapter<News, RecyclerView.ViewHolder>(NEWS_COMPARA
 
         private fun showRepoData(news: News) {
             this.news = news
-            name.text = news.title
+            nameTextView.text = news.title
             timeAgoTextView.text = news.time_ago
+            userTextView.text = "by: ${news.user}"
+            linkTextView.text = news.domain
+            commentTextView.text = news.comments_count.toString()
+            pointsTextView.text = "${news.points}p"
+
         }
 
         companion object {
