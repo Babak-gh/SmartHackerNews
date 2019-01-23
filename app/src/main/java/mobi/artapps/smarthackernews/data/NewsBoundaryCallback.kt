@@ -13,7 +13,8 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class NewsBoundaryCallback(
-    onSuccess: (repos: List<News>) -> Unit
+    onSuccess: (repos: List<News>) -> Unit,
+    deleteDb: () -> Unit
 ) : PagedList.BoundaryCallback<News>() {
 
     companion object {
@@ -32,13 +33,14 @@ class NewsBoundaryCallback(
     private var isRequestInProgress = false
 
     private val save = onSuccess
+    private val deleteNewsTable = deleteDb
 
     /**
      * Database returned 0 items. We should query the backend for more items.
      */
     override fun onZeroItemsLoaded() {
         Log.d("RepoBoundaryCallback", "onZeroItemsLoaded")
-        requestAndSaveData()
+        requestAndSaveData(false)
     }
 
     /**
@@ -46,14 +48,16 @@ class NewsBoundaryCallback(
      */
     override fun onItemAtEndLoaded(itemAtEnd: News) {
         Log.d("RepoBoundaryCallback", "onItemAtEndLoaded")
-        requestAndSaveData()
+        requestAndSaveData(false)
     }
 
-    override fun onItemAtFrontLoaded(itemAtFront: News) {
+    fun onPullDown(){
+        deleteNewsTable()
+        requestAndSaveData(true)
 
     }
 
-    private fun requestAndSaveData() {
+    private fun requestAndSaveData(isFromPullDown:Boolean) {
         if (isRequestInProgress) return
 
         isRequestInProgress = true
@@ -61,7 +65,7 @@ class NewsBoundaryCallback(
 
         val hackerNewsService =
             ServiceGenerator.createDefaultService(HackerNewsService::class.java, ServiceGenerator.baseURL)
-        val call = hackerNewsService.getNews(lastRequestedPage.toString())
+        val call = hackerNewsService.getNews(if (isFromPullDown) "1" else lastRequestedPage.toString())
         call.enqueue(object : Callback<List<FeedItem>> {
             override fun onFailure(call: Call<List<FeedItem>>, t: Throwable) {
                 Log.d("BABAK", "fail to get data")
@@ -93,7 +97,9 @@ class NewsBoundaryCallback(
                     }
 
                     save(news)
-                    lastRequestedPage++
+                    if (!isFromPullDown){
+                        lastRequestedPage++
+                    }
                     isRequestInProgress = false
                 } else {
                     _networkErrors.postValue(response.errorBody()?.string() ?: "Unknown error")

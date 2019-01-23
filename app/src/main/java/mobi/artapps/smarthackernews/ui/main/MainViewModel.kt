@@ -27,7 +27,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun invalidateDataSource() {
-        mAllNews.value?.dataSource?.invalidate()
+        mNewsRepository.invalidateDataSource()
     }
 
 }

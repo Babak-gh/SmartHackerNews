@@ -14,7 +14,12 @@ class NewsRepository(application: Application) {
     private val db = AppDataBase.getInstance(application)
     private val newsDao = db.newsDao()
     private val mAllNews = newsDao.getAll()
+    private var boundaryCallback : NewsBoundaryCallback? = null
 
+
+    fun invalidateDataSource(){
+        boundaryCallback?.onPullDown()
+    }
 
     fun getAllNewsFromNetworkOrDB(): NewsResult {
         // Get data source factory from the local cache
@@ -23,10 +28,11 @@ class NewsRepository(application: Application) {
         // every new query creates a new BoundaryCallback
         // The BoundaryCallback will observe when the user reaches to the edges of
         // the list and update the database with extra data
-        val boundaryCallback = NewsBoundaryCallback { news ->
+        boundaryCallback = NewsBoundaryCallback ({ news ->
             insert(news)
-        }
-        val networkErrors = boundaryCallback.networkErrors
+        },{ deleteDatabaseData()} )
+
+        val networkErrors = boundaryCallback?.networkErrors
 
         // Get the paged list
         val data = LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
@@ -34,7 +40,7 @@ class NewsRepository(application: Application) {
             .build()
 
         // Get the network errors exposed by the boundary callback
-        return NewsResult(data, networkErrors)
+        return NewsResult(data, networkErrors!!)
     }
 
     companion object {
@@ -42,6 +48,8 @@ class NewsRepository(application: Application) {
     }
 
     fun getAllNews() = mAllNews
+
+    fun deleteDatabaseData() = DeleteAsyncTask(newsDao).execute()
 
     fun insert(news: List<News>) {
         InsertAsyncTask(newsDao).execute(news)
@@ -55,6 +63,19 @@ class NewsRepository(application: Application) {
         override fun doInBackground(vararg params: List<News>?) {
 
             mAsyncTaskDao.insertAll(params[0]!!)
+
+        }
+
+    }
+
+    private class DeleteAsyncTask(mAsyncTaskDao: NewsDAO) : AsyncTask<Void, Void, Unit>() {
+
+        private val mAsyncTaskDao = mAsyncTaskDao
+
+
+        override fun doInBackground(vararg params: Void?) {
+
+            mAsyncTaskDao.deleteAll()
 
         }
 

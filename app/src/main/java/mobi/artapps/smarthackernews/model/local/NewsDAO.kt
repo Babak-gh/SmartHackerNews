@@ -26,5 +26,9 @@ interface NewsDAO {
     @Delete
     fun delete(news: News)
 
+    @Query("DELETE FROM news")
+    fun deleteAll()
+
+
 
 }
