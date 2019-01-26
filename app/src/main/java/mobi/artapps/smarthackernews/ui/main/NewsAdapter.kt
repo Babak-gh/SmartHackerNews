@@ -1,16 +1,23 @@
 package mobi.artapps.smarthackernews.ui.main
 
 import android.arch.paging.PagedListAdapter
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.util.DiffUtil
+import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import mobi.artapps.smarthackernews.R
 import mobi.artapps.smarthackernews.model.local.entity.News
+
 
 class NewsAdapter : PagedListAdapter<News, RecyclerView.ViewHolder>(NEWS_COMPARATOR) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -37,15 +44,22 @@ class NewsAdapter : PagedListAdapter<News, RecyclerView.ViewHolder>(NEWS_COMPARA
         private val linkTextView: TextView = view.findViewById(R.id.news_view_item_link)
         private val commentTextView: TextView = view.findViewById(R.id.news_view_item_comment)
         private val pointsTextView: TextView = view.findViewById(R.id.news_view_item_points)
+        private val menuImageView: ImageView = view.findViewById(R.id.news_view_item_menu_imageView)
 
         private var news: News? = null
 
         init {
             view.setOnClickListener {
-                news?.url?.let { url ->
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    view.context.startActivity(intent)
-                }
+
+            }
+
+            view.setOnLongClickListener {
+                openContextMenu()
+                true
+            }
+
+            menuImageView.setOnClickListener {
+                openContextMenu()
             }
         }
 
@@ -75,6 +89,42 @@ class NewsAdapter : PagedListAdapter<News, RecyclerView.ViewHolder>(NEWS_COMPARA
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.news_view_item, parent, false)
                 return NewsViewHolder(view)
+            }
+        }
+
+        private fun openContextMenu() {
+
+            val popup = PopupMenu(itemView.context, menuImageView)
+            popup.inflate(R.menu.main_list_item_context_menu)
+            popup.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.context_menu_browser -> openInBrowser()
+                    R.id.context_menu_copy -> copyLinkToClipBoard()
+                    R.id.context_menu_share -> shareLink()
+                }
+                true
+            }
+            popup.show()
+        }
+
+        private fun shareLink() {
+            val i = Intent(android.content.Intent.ACTION_SEND)
+            i.type = "text/plain"
+            i.putExtra(android.content.Intent.EXTRA_SUBJECT, news?.title)
+            i.putExtra(android.content.Intent.EXTRA_TEXT, String.format("%s - %s", news?.title, news?.url))
+            startActivity(itemView.context, Intent.createChooser(i, "Share via"), null)
+        }
+
+        private fun copyLinkToClipBoard() {
+            val clipboard = itemView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("link", news?.url)
+            clipboard.setPrimaryClip(clip)
+        }
+
+        private fun openInBrowser() {
+            news?.url?.let { url ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                itemView.context.startActivity(intent)
             }
         }
     }

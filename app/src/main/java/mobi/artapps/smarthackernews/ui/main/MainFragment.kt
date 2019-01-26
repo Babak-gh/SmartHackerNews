@@ -16,6 +16,7 @@ import android.widget.Toast
 import mobi.artapps.smarthackernews.R
 import mobi.artapps.smarthackernews.model.local.entity.News
 
+
 class MainFragment : Fragment() {
 
     companion object {
@@ -67,5 +68,6 @@ class MainFragment : Fragment() {
 
         viewModel.searchRepo("")
     }
+
 
 }

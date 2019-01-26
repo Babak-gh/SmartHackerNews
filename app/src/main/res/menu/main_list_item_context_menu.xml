@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/context_menu_browser"
+            android:title="Open in Browser"/>
+
+    <item
+            android:id="@+id/context_menu_copy"
+            android:title="Copy Origin URL"/>
+
+    <item
+            android:id="@+id/context_menu_share"
+            android:title="Share"/>
+
+    <item
+            android:id="@+id/context_menu_view_user"
+            android:title="View User"/>
+
+    <item
+            android:id="@+id/context_menu_add_comment"
+            android:title="Add Comment"/>
+
+    <item
+            android:id="@+id/context_menu_upvote"
+            android:title="Upvote"/>
+
+</menu>
