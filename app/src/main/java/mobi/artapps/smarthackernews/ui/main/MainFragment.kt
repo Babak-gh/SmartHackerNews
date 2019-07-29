@@ -8,10 +8,14 @@ import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import mobi.artapps.smarthackernews.R
 import mobi.artapps.smarthackernews.model.local.entity.News
@@ -36,6 +40,23 @@ class MainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+
+        var toolbar: Toolbar? = activity?.findViewById(R.id.toolbar)
+        var spinner: Spinner? = toolbar?.findViewById(R.id.main_activity_spinner)
+        val items = arrayOf("News", "Newest", "Ask", "Show", "Jobs")
+        val adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, items)
+        spinner?.adapter = adapter
+        spinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+            }
+
+        }
+
 
 
         val swipeRefreshLayout = view?.findViewById<SwipeRefreshLayout>(R.id.swipeContainer)
