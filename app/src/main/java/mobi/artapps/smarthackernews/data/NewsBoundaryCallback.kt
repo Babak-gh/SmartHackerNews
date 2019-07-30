@@ -1,9 +1,9 @@
 package mobi.artapps.smarthackernews.data
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.paging.PagedList
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.paging.PagedList
 import mobi.artapps.smarthackernews.model.local.entity.News
 import mobi.artapps.smarthackernews.model.remote.HackerNewsService
 import mobi.artapps.smarthackernews.model.remote.ServiceGenerator

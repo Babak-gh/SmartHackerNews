@@ -1,8 +1,8 @@
 package mobi.artapps.smarthackernews.data
 
 import android.app.Application
-import android.arch.paging.LivePagedListBuilder
 import android.os.AsyncTask
+import androidx.paging.LivePagedListBuilder
 import mobi.artapps.smarthackernews.model.local.AppDataBase
 import mobi.artapps.smarthackernews.model.local.NewsDAO
 import mobi.artapps.smarthackernews.model.local.entity.News

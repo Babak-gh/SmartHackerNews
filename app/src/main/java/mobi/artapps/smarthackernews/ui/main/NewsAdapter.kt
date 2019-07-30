@@ -1,20 +1,20 @@
 package mobi.artapps.smarthackernews.ui.main
 
-import android.arch.paging.PagedListAdapter
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.support.v4.content.ContextCompat.startActivity
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.PopupMenu
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat.startActivity
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import mobi.artapps.smarthackernews.R
 import mobi.artapps.smarthackernews.model.local.entity.News
 
@@ -108,17 +108,17 @@ class NewsAdapter : PagedListAdapter<News, RecyclerView.ViewHolder>(NEWS_COMPARA
         }
 
         private fun shareLink() {
-            val i = Intent(android.content.Intent.ACTION_SEND)
+            val i = Intent(Intent.ACTION_SEND)
             i.type = "text/plain"
-            i.putExtra(android.content.Intent.EXTRA_SUBJECT, news?.title)
-            i.putExtra(android.content.Intent.EXTRA_TEXT, String.format("%s - %s", news?.title, news?.url))
+            i.putExtra(Intent.EXTRA_SUBJECT, news?.title)
+            i.putExtra(Intent.EXTRA_TEXT, String.format("%s - %s", news?.title, news?.url))
             startActivity(itemView.context, Intent.createChooser(i, "Share via"), null)
         }
 
         private fun copyLinkToClipBoard() {
             val clipboard = itemView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("link", news?.url)
-            clipboard.setPrimaryClip(clip)
+            clipboard.primaryClip = clip
         }
 
         private fun openInBrowser() {

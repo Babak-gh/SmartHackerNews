@@ -1,7 +1,7 @@
 package mobi.artapps.smarthackernews.model.local
 
-import android.arch.paging.DataSource
-import android.arch.persistence.room.*
+import androidx.paging.DataSource
+import androidx.room.*
 import mobi.artapps.smarthackernews.model.local.entity.News
 
 @Dao

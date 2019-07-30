@@ -1,14 +1,6 @@
 package mobi.artapps.smarthackernews.ui.main
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.arch.paging.PagedList
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,8 +9,16 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.paging.PagedList
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import mobi.artapps.smarthackernews.R
 import mobi.artapps.smarthackernews.model.local.entity.News
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainFragment : Fragment() {
@@ -27,7 +27,7 @@ class MainFragment : Fragment() {
         fun newInstance() = MainFragment()
     }
 
-    private lateinit var viewModel: MainViewModel
+    val mainViewModel: MainViewModel by viewModel()
     private lateinit var newsAdapter: NewsAdapter
 
     override fun onCreateView(
@@ -39,7 +39,6 @@ class MainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         var toolbar: Toolbar? = activity?.findViewById(R.id.toolbar)
         var spinner: Spinner? = toolbar?.findViewById(R.id.main_activity_spinner)
@@ -57,37 +56,39 @@ class MainFragment : Fragment() {
 
         }
 
-
-
         val swipeRefreshLayout = view?.findViewById<SwipeRefreshLayout>(R.id.swipeContainer)
         swipeRefreshLayout?.setColorSchemeResources(
             android.R.color.holo_blue_bright,
             android.R.color.holo_green_light,
             android.R.color.holo_orange_light,
             android.R.color.holo_red_light
-        );
+        )
 
         swipeRefreshLayout?.setOnRefreshListener {
-            viewModel.invalidateDataSource()
+            mainViewModel.invalidateDataSource()
         }
 
         val recyclerView = view?.findViewById<RecyclerView>(R.id.main_fragment_recycler)
-        recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        recyclerView?.layoutManager = LinearLayoutManager(
+            context,
+            RecyclerView.VERTICAL,
+            false
+        )
         newsAdapter = NewsAdapter()
         recyclerView?.adapter = newsAdapter
 
-        viewModel.mAllNews.observe(this, Observer<PagedList<News>> {
+        mainViewModel.mAllNews.observe(this, Observer<PagedList<News>> {
             Log.d("Activity", "list: ${it?.size}")
             //showEmptyList(it?.size == 0)
             newsAdapter.submitList(it)
             swipeRefreshLayout?.isRefreshing = false
         })
 
-        viewModel.networkErrors.observe(this, Observer<String> {
+        mainViewModel.networkErrors.observe(this, Observer<String> {
             Toast.makeText(context, "\uD83D\uDE28 Wooops $it", Toast.LENGTH_LONG).show()
         })
 
-        viewModel.searchRepo("")
+        mainViewModel.searchRepo("")
     }
 
 
