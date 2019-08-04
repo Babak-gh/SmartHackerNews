@@ -1,10 +1,11 @@
 package mobi.artapps.smarthackernews.data
 
 import android.app.Application
-import android.os.AsyncTask
 import androidx.paging.LivePagedListBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import mobi.artapps.smarthackernews.model.local.AppDataBase
-import mobi.artapps.smarthackernews.model.local.NewsDAO
 import mobi.artapps.smarthackernews.model.local.entity.News
 import mobi.artapps.smarthackernews.model.local.entity.NewsResult
 
@@ -15,7 +16,11 @@ class NewsRepository(application: Application) {
     private val newsDao = db.newsDao()
     private val mAllNews = newsDao.getAll()
     private var boundaryCallback : NewsBoundaryCallback? = null
+    private val ioScope = CoroutineScope(Dispatchers.IO)
 
+    companion object {
+        private const val DATABASE_PAGE_SIZE = 20
+    }
 
     fun invalidateDataSource(){
         boundaryCallback?.onPullDown()
@@ -43,42 +48,15 @@ class NewsRepository(application: Application) {
         return NewsResult(data, networkErrors!!)
     }
 
-    companion object {
-        private const val DATABASE_PAGE_SIZE = 20
+
+    private fun getAllNews() = mAllNews
+
+    private fun deleteDatabaseData() = ioScope.launch {
+        newsDao.deleteAll()
     }
 
-    fun getAllNews() = mAllNews
-
-    fun deleteDatabaseData() = DeleteAsyncTask(newsDao).execute()
-
-    fun insert(news: List<News>) {
-        InsertAsyncTask(newsDao).execute(news)
-    }
-
-    private class InsertAsyncTask(mAsyncTaskDao: NewsDAO) : AsyncTask<List<News>, Void, Unit>() {
-
-        private val mAsyncTaskDao = mAsyncTaskDao
-
-
-        override fun doInBackground(vararg params: List<News>?) {
-
-            mAsyncTaskDao.insertAll(params[0]!!)
-
-        }
-
-    }
-
-    private class DeleteAsyncTask(mAsyncTaskDao: NewsDAO) : AsyncTask<Void, Void, Unit>() {
-
-        private val mAsyncTaskDao = mAsyncTaskDao
-
-
-        override fun doInBackground(vararg params: Void?) {
-
-            mAsyncTaskDao.deleteAll()
-
-        }
-
+    private fun insert(news: List<News>) = ioScope.launch {
+        newsDao.insertAll(news)
     }
 
 }

@@ -27,7 +27,7 @@ class MainFragment : Fragment() {
         fun newInstance() = MainFragment()
     }
 
-    val mainViewModel: MainViewModel by viewModel()
+    private val mainViewModel: MainViewModel by viewModel()
     private lateinit var newsAdapter: NewsAdapter
 
     override fun onCreateView(
