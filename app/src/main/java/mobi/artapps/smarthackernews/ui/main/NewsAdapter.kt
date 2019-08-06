@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -123,8 +125,12 @@ class NewsAdapter : PagedListAdapter<News, RecyclerView.ViewHolder>(NEWS_COMPARA
 
         private fun openInBrowser() {
             news?.url?.let { url ->
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                itemView.context.startActivity(intent)
+
+                val customTabsIntentBuilder = CustomTabsIntent.Builder()
+                customTabsIntentBuilder.setToolbarColor(ContextCompat.getColor(itemView.context, R.color.colorPrimary))
+                val customTabsIntent = customTabsIntentBuilder.build()
+                customTabsIntent.launchUrl(itemView.context, Uri.parse(url))
+
             }
         }
     }
