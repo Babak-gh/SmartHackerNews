@@ -1,46 +1,17 @@
 package mobi.artapps.smarthackernews.data
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import mobi.artapps.smarthackernews.model.local.entity.News
-import mobi.artapps.smarthackernews.model.remote.HackerNewsService
-import mobi.artapps.smarthackernews.model.remote.ServiceGenerator
-import mobi.artapps.smarthackernews.model.remote.entity.FeedItem
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class NewsBoundaryCallback(
-    onSuccess: (repos: List<News>) -> Unit,
-    deleteDb: () -> Unit
-) : PagedList.BoundaryCallback<News>() {
-
-    companion object {
-        private const val NETWORK_PAGE_SIZE = 50
-    }
-
-    // keep the last requested page. When the request is successful, increment the page number.
-    private var lastRequestedPage = 1
-
-    private val _networkErrors = MutableLiveData<String>()
-    // LiveData of network errors.
-    val networkErrors: LiveData<String>
-        get() = _networkErrors
-
-    // avoid triggering multiple requests in the same time
-    private var isRequestInProgress = false
-
-    private val save = onSuccess
-    private val deleteNewsTable = deleteDb
+class NewsBoundaryCallback : PagedList.BoundaryCallback<News>() {
 
     /**
      * Database returned 0 items. We should query the backend for more items.
      */
     override fun onZeroItemsLoaded() {
         Log.d("RepoBoundaryCallback", "onZeroItemsLoaded")
-        requestAndSaveData(false)
+        //requestAndSaveData(false)
     }
 
     /**
@@ -48,16 +19,11 @@ class NewsBoundaryCallback(
      */
     override fun onItemAtEndLoaded(itemAtEnd: News) {
         Log.d("RepoBoundaryCallback", "onItemAtEndLoaded")
-        requestAndSaveData(false)
+        //requestAndSaveData(false)
     }
 
-    fun onPullDown(){
-        deleteNewsTable()
-        requestAndSaveData(true)
 
-    }
-
-    private fun requestAndSaveData(isFromPullDown:Boolean) {
+/*    private fun requestAndSaveData(isFromPullDown:Boolean) {
         if (isRequestInProgress) return
 
         isRequestInProgress = true
@@ -110,5 +76,5 @@ class NewsBoundaryCallback(
 
         })
 
-    }
+    }*/
 }

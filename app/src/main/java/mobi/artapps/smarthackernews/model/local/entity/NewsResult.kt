@@ -2,8 +2,11 @@ package mobi.artapps.smarthackernews.model.local.entity
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
+import mobi.artapps.smarthackernews.data.NetworkState
 
-class NewsResult(
+data class NewsResult(
     val data: LiveData<PagedList<News>>,
-    val networkErrors: LiveData<String>
+    val networkState: LiveData<NetworkState>,
+    val refreshState: LiveData<NetworkState>,
+    val refresh: () -> Unit
 )

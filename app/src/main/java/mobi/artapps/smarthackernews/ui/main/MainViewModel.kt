@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
+import mobi.artapps.smarthackernews.data.NetworkState
 import mobi.artapps.smarthackernews.data.NewsRepository
 import mobi.artapps.smarthackernews.model.local.entity.News
 import mobi.artapps.smarthackernews.model.local.entity.NewsResult
@@ -17,14 +18,14 @@ class MainViewModel(private val mNewsRepository: NewsRepository) : ViewModel() {
     }
 
     val mAllNews: LiveData<PagedList<News>> = Transformations.switchMap(newsResult) { it.data }
-    val networkErrors: LiveData<String> = Transformations.switchMap(newsResult) { it.networkErrors }
+    val networkErrors: LiveData<NetworkState> = Transformations.switchMap(newsResult) { it.networkState }
 
     fun searchRepo(queryString: String) {
         queryLiveData.postValue(queryString)
     }
 
     fun invalidateDataSource() {
-        mNewsRepository.invalidateDataSource()
+        newsResult.value?.refresh?.invoke()
     }
 
 }

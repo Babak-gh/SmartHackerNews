@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import mobi.artapps.smarthackernews.R
+import mobi.artapps.smarthackernews.data.NetworkState
 import mobi.artapps.smarthackernews.model.local.entity.News
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -84,8 +84,8 @@ class MainFragment : Fragment() {
             swipeRefreshLayout?.isRefreshing = false
         })
 
-        mainViewModel.networkErrors.observe(this, Observer<String> {
-            Toast.makeText(context, "\uD83D\uDE28 Wooops $it", Toast.LENGTH_LONG).show()
+        mainViewModel.networkErrors.observe(this, Observer<NetworkState> {
+            //Toast.makeText(context, "\uD83D\uDE28 Wooops $it", Toast.LENGTH_LONG).show()
         })
 
         mainViewModel.searchRepo("")
