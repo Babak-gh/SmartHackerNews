@@ -7,11 +7,12 @@ import mobi.artapps.smarthackernews.model.local.entity.News
 import mobi.artapps.smarthackernews.model.remote.HackerNewsService
 import mobi.artapps.smarthackernews.model.remote.ServiceGenerator
 import mobi.artapps.smarthackernews.model.remote.entity.FeedItem
+import mobi.artapps.smarthackernews.model.remote.entity.NewsType
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NewsDataSource : PageKeyedDataSource<Int, News>() {
+class NewsDataSource(private val newsType: NewsType) : PageKeyedDataSource<Int, News>() {
 
     val networkState = MutableLiveData<NetworkState>()
     val initialLoad = MutableLiveData<NetworkState>()
@@ -42,7 +43,13 @@ class NewsDataSource : PageKeyedDataSource<Int, News>() {
         networkState.postValue(NetworkState.LOADING)
         if (page == 1) initialLoad.postValue(NetworkState.LOADING)
 
-        val call = hackerNewsService.getNews(page.toString())
+        val call = when (newsType) {
+            NewsType.NEWS -> hackerNewsService.getNews(page.toString())
+            NewsType.NEWEST -> hackerNewsService.getNewest(page.toString())
+            NewsType.ASK -> hackerNewsService.getAsk(page.toString())
+            NewsType.JOBS -> hackerNewsService.getJobs(page.toString())
+            NewsType.SHOW -> hackerNewsService.getShow(page.toString())
+        }
         call.enqueue(object : Callback<List<FeedItem>> {
             override fun onFailure(call: Call<List<FeedItem>>, t: Throwable) {
                 Log.d("BABAK", "fail to get data")

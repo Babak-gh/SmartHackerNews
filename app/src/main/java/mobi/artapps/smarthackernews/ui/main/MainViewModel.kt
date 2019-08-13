@@ -9,18 +9,19 @@ import mobi.artapps.smarthackernews.data.NetworkState
 import mobi.artapps.smarthackernews.data.NewsRepository
 import mobi.artapps.smarthackernews.model.local.entity.News
 import mobi.artapps.smarthackernews.model.local.entity.NewsResult
+import mobi.artapps.smarthackernews.model.remote.entity.NewsType
 
 class MainViewModel(private val mNewsRepository: NewsRepository) : ViewModel() {
 
-    private val queryLiveData = MutableLiveData<String>()
+    private val queryLiveData = MutableLiveData<NewsType>()
     private val newsResult: LiveData<NewsResult> = Transformations.map(queryLiveData) {
-        mNewsRepository.getAllNewsFromNetworkOrDB()
+        mNewsRepository.getAllNewsFromNetworkOrDB(it)
     }
 
     val mAllNews: LiveData<PagedList<News>> = Transformations.switchMap(newsResult) { it.data }
     val networkErrors: LiveData<NetworkState> = Transformations.switchMap(newsResult) { it.networkState }
 
-    fun searchRepo(queryString: String) {
+    fun searchRepo(queryString: NewsType) {
         queryLiveData.postValue(queryString)
     }
 

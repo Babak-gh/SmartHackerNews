@@ -4,13 +4,15 @@ import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import mobi.artapps.smarthackernews.model.local.entity.NewsResult
+import mobi.artapps.smarthackernews.model.remote.entity.NewsType
 
 class NewsRepository {
 
     private val dataSourceFactory = NewsDataSourceFactory()
 
-    fun getAllNewsFromNetworkOrDB(): NewsResult {
+    fun getAllNewsFromNetworkOrDB(newsType: NewsType): NewsResult {
 
+        dataSourceFactory.newsType = newsType
         // every new query creates a new BoundaryCallback
         // The BoundaryCallback will observe when the user reaches to the edges of
         // the list and update the database with extra data
@@ -30,10 +32,10 @@ class NewsRepository {
             Transformations.switchMap(dataSourceFactory.sourceLiveData) {
                 it.networkState
             },
-            refreshState,
-            {
-                dataSourceFactory.sourceLiveData.value?.invalidate()
-            })
+            refreshState
+        ) {
+            dataSourceFactory.sourceLiveData.value?.invalidate()
+        }
     }
 
     private fun pagedListConfig() = PagedList.Config.Builder()

@@ -18,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import mobi.artapps.smarthackernews.R
 import mobi.artapps.smarthackernews.data.NetworkState
 import mobi.artapps.smarthackernews.model.local.entity.News
+import mobi.artapps.smarthackernews.model.remote.entity.NewsType
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -52,6 +53,15 @@ class MainFragment : Fragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
+                val newsType = when (position) {
+                    0 -> NewsType.NEWS
+                    1 -> NewsType.NEWEST
+                    2 -> NewsType.ASK
+                    3 -> NewsType.SHOW
+                    4 -> NewsType.JOBS
+                    else -> NewsType.NEWS
+                }
+                mainViewModel.searchRepo(newsType)
             }
 
         }
@@ -88,7 +98,7 @@ class MainFragment : Fragment() {
             //Toast.makeText(context, "\uD83D\uDE28 Wooops $it", Toast.LENGTH_LONG).show()
         })
 
-        mainViewModel.searchRepo("")
+        mainViewModel.searchRepo(NewsType.NEWS)
     }
 
 
